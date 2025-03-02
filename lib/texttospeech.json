@@ -1,0 +1,40 @@
+{
+    "description": "Text-to-speech symptom-to-prescription system",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "symptoms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of symptoms."
+        }
+      },
+      "required": ["symptoms"]
+    },
+    "output_schema": {
+      "type": "object",
+      "properties": {
+        "prescriptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of corresponding prescriptions."
+        }
+      },
+      "required": ["prescriptions"]
+    },
+    "function_code": "import pyttsx3\n\n# Initialize text-to-speech engine\ntext_speech = pyttsx3.init()\n\ndef recommendations(symptoms_list):\n    \"\"\"\n    Takes a list of symptoms and returns a list of corresponding prescriptions.\n\n    Args:\n        symptoms_list: A list of strings representing symptoms.\n\n    Returns:\n        A list of strings representing prescriptions, or None if no match.\n    \"\"\"\n\n    prescriptions_dict = {\n        \"fever\": \"Take paracetamol, drink plenty of fluids, and get some rest.\",\n        \"cough\": \"Try cough syrup, drink warm water, and avoid cold drinks.\",\n        \"headache\": \"Take ibuprofen or paracetamol and rest in a quiet place.\",\n        \"stomach pain\": \"Avoid spicy food, drink warm water, and try antacids.\",\n        \"cold\": \"Stay hydrated, take vitamin C, and get proper rest.\",\n        \"runny nose\": \"Use saline nasal spray, drink warm liquids, and rest.\",\n        \"sore throat\": \"Gargle with warm salt water, drink warm tea with honey, and rest.\",\n        \"muscle aches\": \"Apply a warm compress, take pain relievers, and rest.\",\n        \"fatigue\": \"Get plenty of sleep, stay hydrated, and eat nutritious foods.\",\n        \"nausea\": \"Sip on clear liquids, eat bland foods, and rest.\"\n    }\n\n    recommendations_list = []\n\n    for symptom in symptoms_list:\n        symptom_lower = symptom.lower()  # Convert to lowercase for case-insensitive matching\n        prescription = prescriptions_dict.get(symptom_lower)\n        if prescription:\n            recommendations_list.append(prescription)\n            print(f\"Symptom: {symptom.capitalize()}\")\n            print(f\"Prescription: {prescription}\")\n            text_speech.say(prescription)\n            text_speech.runAndWait()\n        else:\n            recommendations_list.append(f\"No recommendation found for: {symptom}\")\n            print(f\"No recommendation found for: {symptom}\")\n            text_speech.say(f\"No recommendation found for: {symptom}\")\n            text_speech.runAndWait()\n\n    return {\"prescriptions\": recommendations_list}\n\n\ndef main(input_data):\n    symptoms = input_data[\"symptoms\"]\n    result = recommendations(symptoms)\n    return result",
+    "example_input": {
+      "symptoms": ["Fever", "Cough", "Headache"]
+    },
+    "example_output": {
+      "prescriptions": [
+        "Take paracetamol, drink plenty of fluids, and get some rest.",
+        "Try cough syrup, drink warm water, and avoid cold drinks.",
+        "Take ibuprofen or paracetamol and rest in a quiet place."
+      ]
+    }
+  }
